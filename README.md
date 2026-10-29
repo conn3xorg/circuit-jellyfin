@@ -139,7 +139,7 @@ Before the circuit runs, the `conn3x_host` data source reads each host's distrib
 
 ## Requirements
 
-Requires Conn3x v0.6.5 or later and systemd on each host, with a package mirror the host can reach. Debian and Ubuntu hosts need to reach `repo.jellyfin.org`, and Jellyfin's repository has suites for Debian 12 and 13 and Ubuntu 22.04, 24.04 and 26.04, on amd64, arm64 and armhf. Rocky Linux, AlmaLinux and Fedora hosts need Podman 5 or later, which the circuit installs from the distribution, and to reach Docker Hub; the image is amd64 and arm64. Jellyfin wants local storage for `data_dir` and `cache_dir`, not a network share.
+Requires Conn3x v0.6.9 or later and systemd on each host, with a package mirror the host can reach. Debian and Ubuntu hosts need to reach `repo.jellyfin.org`, and Jellyfin's repository has suites for Debian 12 and 13 and Ubuntu 22.04, 24.04 and 26.04, on amd64, arm64 and armhf. Rocky Linux, AlmaLinux and Fedora hosts need Podman 5 or later, which the circuit installs from the distribution, and to reach Docker Hub; the image is amd64 and arm64. Jellyfin wants local storage for `data_dir` and `cache_dir`, not a network share.
 
 ## Tested on
 
