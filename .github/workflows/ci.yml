@@ -94,6 +94,26 @@ jobs:
       - name: Plan again after the restart
         working-directory: examples/local
         run: conn3x plan -detailed-exitcode
+      - name: A link at network.xml leaves where it points as it was
+        working-directory: examples/local
+        run: |
+          sudo podman exec circuit-jellyfin sh -ec '
+            d=/etc/jellyfin
+            [ -d "$d" ] || d=/var/lib/jellyfin/config
+            cp "$d/network.xml" /root/network.xml
+            rm "$d/network.xml"
+            ln -s /root/link-target "$d/network.xml"
+          '
+          conn3x apply -auto-approve || true
+          sudo podman exec circuit-jellyfin sh -ec '
+            [ ! -e /root/link-target ]
+            d=/etc/jellyfin
+            [ -d "$d" ] || d=/var/lib/jellyfin/config
+            rm "$d/network.xml"
+            install -o jellyfin -g jellyfin -m 0644 /root/network.xml "$d/network.xml"
+          '
+          conn3x apply -auto-approve
+          conn3x plan -detailed-exitcode
       - name: Clean up
         if: always()
         working-directory: examples/local
