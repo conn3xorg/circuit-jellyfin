@@ -61,19 +61,22 @@ locals {
   # Jellyfin keeps its port in network.xml, which it writes itself on its
   # first start and reads only at start. So the port is set in place with
   # Jellyfin stopped, and a host that hasn't started it yet gets a file
-  # with only the port, which Jellyfin fills in with its defaults.
+  # with only the port, which Jellyfin fills in with its defaults. The
+  # directory is the jellyfin user's, so the file work runs as that user.
   port_command = { for name in keys(var.hosts) : name => <<-EOT
     set -e
-    f=${local.config_dir[name]}/network.xml
     systemctl stop jellyfin 2>/dev/null || true
+    cd /
+    runuser -u jellyfin -- sh -es ${local.config_dir[name]} <<'SH'
+    f=$1/network.xml
     if [ -f "$f" ]; then
       grep -q '<InternalHttpPort>' "$f" || { echo "$f has no InternalHttpPort to set." >&2; exit 1; }
       sed -i 's|<InternalHttpPort>[0-9]*</InternalHttpPort>|<InternalHttpPort>${var.port}</InternalHttpPort>|' "$f"
     else
-      [ -d ${local.config_dir[name]} ] || install -d -o jellyfin -g jellyfin -m 0750 ${local.config_dir[name]}
+      mkdir -p -m 0750 "$1"
       printf '<?xml version="1.0" encoding="utf-8"?>\n<NetworkConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">\n  <InternalHttpPort>${var.port}</InternalHttpPort>\n</NetworkConfiguration>\n' > "$f"
-      chown jellyfin:jellyfin "$f"
     fi
+    SH
   EOT
   }
   port_unless = { for name in keys(var.hosts) : name => "grep -q '<InternalHttpPort>${var.port}</InternalHttpPort>' ${local.config_dir[name]}/network.xml" }

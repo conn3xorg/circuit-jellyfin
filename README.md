@@ -15,7 +15,7 @@ variable "jellyfin_admin_password" {
 }
 
 module "jellyfin" {
-  source = "github.com/conn3xorg/circuit-jellyfin?ref=v0.1.0"
+  source = "github.com/conn3xorg/circuit-jellyfin?ref=v0.1.1"
 
   hosts                = { nas = "192.168.1.20" }
   ssh_private_key_file = "~/.ssh/id_ed25519"
@@ -143,7 +143,7 @@ Requires Conn3x v0.6.9 or later and systemd on each host, with a package mirror 
 
 ## Tested on
 
-Rocky Linux 10, Fedora 45, Ubuntu 24.04 and Debian 13. CI applies [examples/local](examples/local) to each on amd64 and checks that the second plan has no changes, that `/health` answers `Healthy`, that `/System/Info/Public` shows the wizard finished, that the administrator can sign in and a wrong password can't, and that all of it holds after Jellyfin restarts, with a plan that still has no changes.
+Rocky Linux 10, Fedora 45, Ubuntu 24.04 and Debian 13. CI applies [examples/local](examples/local) to each on amd64 and checks that the second plan has no changes, that `/health` answers `Healthy`, that `/System/Info/Public` shows the wizard finished, that the administrator can sign in and a wrong password can't, and that all of it holds after Jellyfin restarts, with a plan that still has no changes. CI also checks that a link at `network.xml` leaves where it points unchanged.
 
 By hand, in containers: a custom `data_dir`, `cache_dir` and `port` on a fresh Debian 13 host, and the same change on an existing Rocky Linux 10 host, which came up as a new server with the administrator created again.
 
