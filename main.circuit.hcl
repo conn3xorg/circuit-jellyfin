@@ -284,7 +284,7 @@ module "podman" {
 
   containers = {
     jellyfin = {
-      image   = "docker.io/jellyfin/jellyfin:${var.jellyfin_version}"
+      image   = "docker.io/jellyfin/jellyfin:${var.jellyfin_version}@${var.image_digest}"
       volumes = concat(["${var.data_dir}:/config", "${var.cache_dir}:/cache"], [for d in var.media_dirs : "${d}:${d}:ro"])
       # The image's health check asks port 8096 unless told otherwise.
       environment = { HEALTHCHECK_URL = "http://localhost:${var.port}/health" }

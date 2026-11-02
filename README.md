@@ -15,7 +15,7 @@ variable "jellyfin_admin_password" {
 }
 
 module "jellyfin" {
-  source = "github.com/conn3xorg/circuit-jellyfin?ref=v0.1.2"
+  source = "github.com/conn3xorg/circuit-jellyfin?ref=v0.1.3"
 
   hosts                = { nas = "192.168.1.20" }
   ssh_private_key_file = "~/.ssh/id_ed25519"
@@ -121,6 +121,7 @@ Before the circuit runs, the `conn3x_host` data source reads each host's distrib
 | `ssh_known_hosts_file` | string | `null` | known_hosts file to check host keys against. When null, `~/.ssh/known_hosts`. Not used for a host object with `host_key`. |
 | `ssh_become` | bool | `false` | Run commands as root through sudo. Set it when `ssh_user` isn't root. |
 | `jellyfin_version` | string | `"12.4"` | Jellyfin release. On Debian and Ubuntu it pins `jellyfin-server` and `jellyfin-web`; on Rocky Linux and Fedora it's the image tag. Raising it upgrades in place. |
+| `image_digest` | string | The digest of `12.4` | Digest of the image, on Rocky Linux and Fedora. Podman pulls by the digest, so set it whenever you change `jellyfin_version`. |
 | `media_dirs` | list(string) | `[]` | Directories holding your media, such as `["/srv/media/movies"]`. Checked for read access, never changed. Absolute paths without spaces, colons, commas, quotes or backslashes. |
 | `port` | number | `8096` | HTTP port Jellyfin listens on, on every address. Not `8920`, which Jellyfin keeps for HTTPS. |
 | `data_dir` | string | `"/var/lib/jellyfin"` | Jellyfin's database, metadata and plugins. On Rocky Linux and Fedora, also its settings and logs. |
