@@ -1,5 +1,7 @@
 # circuit-jellyfin
 
+[![Conn3x grade](https://conn3x.org/circuits/jellyfin/grade.svg)](https://conn3x.org/circuits/jellyfin/grade)
+
 A Conn3x circuit that runs [Jellyfin](https://jellyfin.org), the free media server, on a box that already holds your films, shows and music. You point it at your media directories, and you get a server your TVs, phones and browsers can stream from, without a setup wizard left open for whoever finds port 8096 first.
 
 It installs Jellyfin the way the Jellyfin team supports on each distribution. Debian and Ubuntu get Jellyfin's own apt repository, with its signing key pinned in this circuit. Rocky Linux and Fedora have no package from the Jellyfin team, so they run Jellyfin's official image under Podman as a systemd service. On both, Jellyfin runs as a `jellyfin` user that reads your media and never changes it: the circuit doesn't chown, chmod or relabel anything you point it at. Give it an administrator name and password and it finishes the first-run wizard for you.
