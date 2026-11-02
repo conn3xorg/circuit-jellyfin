@@ -381,11 +381,13 @@ circuit "admin" {
 
   # GET /Startup/User makes Jellyfin create its first user, which the POST
   # then names and gives the password. The password reaches curl on stdin,
-  # so it never shows in ps.
+  # so it never shows in ps, and only to a port held by root or jellyfin.
   step "wizard" {
     command {
       command = <<-EOT
         set -e
+        held() { p=$(printf ':%04X$' ${var.port}); u=$(id -u jellyfin); cat /proc/net/tcp /proc/net/tcp6 2>/dev/null | awk -v p="$p" -v u="$u" '$4 == "0A" && $2 ~ p { n++; if ($8 != u && $8 != 0) b = 1 } END { exit !(n && !b) }'; }
+        held || { echo "Port ${var.port} isn't held by jellyfin, so the password wasn't sent." >&2; exit 1; }
         curl -sf -o /dev/null ${local.url}/Startup/User
         printf '{"Name":"%s","Password":"%s"}' '${var.admin_username}' "$(cat ${local.password_file})" | curl -sf -o /dev/null -H 'Content-Type: application/json' --data-binary @- ${local.url}/Startup/User
         curl -sf -o /dev/null -X POST ${local.url}/Startup/Complete

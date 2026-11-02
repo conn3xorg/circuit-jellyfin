@@ -15,7 +15,7 @@ variable "jellyfin_admin_password" {
 }
 
 module "jellyfin" {
-  source = "github.com/conn3xorg/circuit-jellyfin?ref=v0.1.1"
+  source = "github.com/conn3xorg/circuit-jellyfin?ref=v0.1.2"
 
   hosts                = { nas = "192.168.1.20" }
   ssh_private_key_file = "~/.ssh/id_ed25519"
