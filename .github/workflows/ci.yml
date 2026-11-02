@@ -129,6 +129,9 @@ jobs:
             pkill -f [h]ttp.server || true
             ! grep -q Startup /tmp/listener.log
           '
+      - name: Check an image, where there is one, is by digest
+        run: |
+          sudo podman exec circuit-jellyfin sh -c 'for f in /etc/containers/systemd/jellyfin.container; do [ ! -f "$f" ] || grep -q "^Image=.*@sha256:" "$f"; done'
       - name: Clean up
         if: always()
         working-directory: examples/local

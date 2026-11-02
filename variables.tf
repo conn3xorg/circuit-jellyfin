@@ -139,3 +139,14 @@ variable "admin_password" {
     error_message = "With admin_username set, admin_password must be at least 8 characters, with no quotes, backslashes or control characters."
   }
 }
+
+variable "image_digest" {
+  type        = string
+  default     = "sha256:fea863d0cd9ec445985d9c75fc6ed64e38a1d2766cf0c250a33d553f4fc1b771"
+  description = "Digest of the image for jellyfin_version, on hosts that run the image. Podman pulls by the digest, so change it with the version."
+
+  validation {
+    condition     = can(regex("^sha256:[a-f0-9]{64}$", var.image_digest))
+    error_message = "image_digest must be a digest, such as \"sha256:45ed...\"."
+  }
+}
