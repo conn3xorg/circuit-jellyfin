@@ -124,7 +124,7 @@ jobs:
           '
           sudo podman exec -d circuit-jellyfin sh -c 'cd /tmp && exec runuser -u nobody -- python3 -m http.server --bind 127.0.0.1 8097 > /tmp/listener.log 2>&1'
           sleep 3
-          ! conn3x apply -auto-approve
+          if conn3x apply -auto-approve; then echo "apply should have refused" >&2; exit 1; fi
           sudo podman exec circuit-jellyfin sh -ec '
             pkill -f [h]ttp.server || true
             ! grep -q Startup /tmp/listener.log
