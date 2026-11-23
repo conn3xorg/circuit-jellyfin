@@ -326,9 +326,23 @@ circuit "jellyfin" {
   }
 
   # Jellyfin reads its directories, groups and port only at start.
+  step "daemon_reload" {
+    service_action {
+      action = "daemon-reload"
+      triggers = {
+        package = try(conn3x_package.native__server[each.key].revision, null)
+        env     = try(conn3x_file.native__env[each.key].revision, null)
+        dropin  = try(conn3x_file.native__dropin[each.key].revision, null)
+        groups  = try(conn3x_command.native__groups["${each.key}/all"].revision, conn3x_command.container__groups["${each.key}/all"].revision, null)
+        user    = try(conn3x_command.container__user_dropin[each.key].revision, null)
+        port    = try(conn3x_command.native__port[each.key].revision, conn3x_command.container__port[each.key].revision)
+      }
+    }
+  }
+
   step "restart" {
-    command {
-      command = "systemctl daemon-reload && systemctl restart jellyfin"
+    service_action {
+      name   = "jellyfin"
       triggers = {
         package = try(conn3x_package.native__server[each.key].revision, null)
         env     = try(conn3x_file.native__env[each.key].revision, null)
@@ -344,7 +358,7 @@ circuit "jellyfin" {
   step "ready" {
     command {
       command  = "for _ in $(seq 90); do [ \"$(curl -s ${local.url}/health)\" = Healthy ] && exit 0; sleep 2; done; echo 'Jellyfin did not answer on ${local.url}/health within three minutes. See journalctl -u jellyfin.' >&2; exit 1"
-      triggers = { restart = conn3x_command.jellyfin__restart[each.key].revision }
+      triggers = { restart = conn3x_service_action.jellyfin__restart[each.key].revision }
     }
   }
 }
