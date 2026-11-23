@@ -342,7 +342,7 @@ circuit "jellyfin" {
 
   step "restart" {
     service_action {
-      name   = "jellyfin"
+      name = "jellyfin"
       triggers = {
         package = try(conn3x_package.native__server[each.key].revision, null)
         env     = try(conn3x_file.native__env[each.key].revision, null)
